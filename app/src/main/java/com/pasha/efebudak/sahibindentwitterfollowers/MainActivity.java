@@ -29,9 +29,11 @@ public class MainActivity extends AppCompatActivity {
 
             if (tokenModel != null) {
 
-                Log.d("tokeeeen", "accesstoken: " + tokenModel.accessToken);
                 accessToken = tokenModel.accessToken;
-                //todo get sahibindencom followers
+
+                startService(
+                        GetFollowerListService.newIntent(
+                                MainActivity.this, accessToken));
 
             }
 
@@ -72,12 +74,4 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onDestroy() {
-
-
-
-        super.onDestroy();
-
-    }
 }

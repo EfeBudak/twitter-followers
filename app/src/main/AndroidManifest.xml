@@ -19,6 +19,7 @@
         </activity>
 
         <service android:name=".GetTwitterAccessTokenService"/>
+        <service android:name=".GetFollowerListService"/>
     </application>
 
 </manifest>
