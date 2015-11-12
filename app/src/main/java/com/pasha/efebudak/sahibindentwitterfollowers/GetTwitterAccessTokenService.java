@@ -9,7 +9,9 @@ import android.util.Base64;
 
 import com.pasha.efebudak.sahibindentwitterfollowers.models.TokenModel;
 
+import java.io.InputStream;
 import java.net.URLEncoder;
+import java.util.Properties;
 
 import retrofit.RestAdapter;
 
@@ -62,12 +64,30 @@ public class GetTwitterAccessTokenService extends IntentService {
         TokenModel tokenModel;
         String base64EncodedString;
 
+        String consumerKey;
+        String consumerSecret;
+
+        try{
+
+            InputStream is = getAssets().open("local.properties");
+            Properties properties = new Properties();
+            properties.load(is);
+            consumerKey = properties.getProperty("consumerKey");
+            consumerSecret = properties.getProperty("consumerSecret");
+
+        } catch (Exception e){
+
+            //shouldnt be here. Just for probation. These keys are kept in local.properties
+            consumerKey= "ioSlZmCm4Is5wPyAba6iOwPEJ";
+            consumerSecret = "2L3M4OjswltizueshfTjV45wMrMFOaHjlEeCmfYECZnQfdfCtI";
+        }
+
         try {
 
             String encodedConsumerKey
-                    = URLEncoder.encode(CONSUMER_KEY, UTF_8);
+                    = URLEncoder.encode(consumerKey, UTF_8);
             String encodedConsumerSecret
-                    = URLEncoder.encode(CONSUMER_SECRET, UTF_8);
+                    = URLEncoder.encode(consumerSecret, UTF_8);
             String authString = encodedConsumerKey + ":" + encodedConsumerSecret;
             base64EncodedString
                     = Base64.encodeToString(authString.getBytes(UTF_8), Base64.NO_WRAP);
