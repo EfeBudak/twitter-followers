@@ -14,6 +14,9 @@ import com.pasha.efebudak.sahibindentwitterfollowers.R;
 import com.pasha.efebudak.sahibindentwitterfollowers.adapters.FollowerListAdapter;
 import com.pasha.efebudak.sahibindentwitterfollowers.models.FollowerListModel;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by efebudak on 11/11/15.
  */
@@ -21,7 +24,8 @@ public class FollowerListFragment extends Fragment {
 
     private static final String KEY_FOLLOWER_LIST_MODEL = "keyFollowerListModel";
 
-    private ListView listViewFollowers;
+    @Bind(R.id.fragment_follower_list_view)
+    ListView listViewFollowers;
 
     private FollowerListModel followerListModel;
 
@@ -45,7 +49,8 @@ public class FollowerListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         final View view = inflater.inflate(R.layout.fragment_follower_list, container, false);
-        listViewFollowers = (ListView) view.findViewById(R.id.fragment_follower_list_view);
+
+        ButterKnife.bind(this, view);
 
         if (savedInstanceState != null) {
             followerListModel = savedInstanceState.getParcelable(KEY_FOLLOWER_LIST_MODEL);

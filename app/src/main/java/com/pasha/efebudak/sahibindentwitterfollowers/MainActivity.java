@@ -6,15 +6,16 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.widget.FrameLayout;
 
+import com.pasha.efebudak.sahibindentwitterfollowers.fragments.FollowerDetailFragment;
 import com.pasha.efebudak.sahibindentwitterfollowers.fragments.FollowerListFragment;
 import com.pasha.efebudak.sahibindentwitterfollowers.models.FollowerListModel;
+import com.pasha.efebudak.sahibindentwitterfollowers.models.FollowerModel;
 import com.pasha.efebudak.sahibindentwitterfollowers.models.TokenModel;
 
 import butterknife.Bind;
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements FollowerListFragm
             if (followerListModel != null) {
 
                 MainActivity.this.followerListModel = followerListModel;
+
                 followerListFragment.updateFollowerListModel(followerListModel);
 
             }
@@ -118,11 +120,18 @@ public class MainActivity extends AppCompatActivity implements FollowerListFragm
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+    protected void onPause() {
 
-        super.onSaveInstanceState(outState, outPersistentState);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiverToken);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiverFollowerList);
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putParcelable(KEY_FOLLOWER_LIST_MODEL, followerListModel);
-
     }
 
     @Override
@@ -172,21 +181,40 @@ public class MainActivity extends AppCompatActivity implements FollowerListFragm
     @Override
     public void onItemClicked(int position) {
 
-        //todo open detail fragment
+        openDetailFragment(followerListModel.getFollowerModelList().get(position));
+
+    }
+
+    private void openDetailFragment(FollowerModel followerModel) {
+
+        final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+        fragmentTransaction.replace(R.id.main_frame_layout_container, FollowerDetailFragment.newInstance(followerModel));
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
 
     }
 
     @Override
     public void callFollowerListService() {
 
-        if (!TextUtils.isEmpty(accessToken)) {
+        if (followerListModel != null) {
 
-            startService(
-                    GetFollowerListService.newIntent(
-                            MainActivity.this, accessToken));
+            followerListFragment
+                    = (FollowerListFragment) getSupportFragmentManager()
+                    .findFragmentByTag(TAG_FOLLOWER_LIST_FRAGMENT);
+
+            followerListFragment.updateFollowerListModel(followerListModel);
 
         } else {
-            followerListServiceRequested = true;
+            if (TextUtils.isEmpty(accessToken)) {
+
+                followerListServiceRequested = true;
+            } else {
+                startService(
+                        GetFollowerListService.newIntent(
+                                MainActivity.this, accessToken));
+            }
         }
 
     }
