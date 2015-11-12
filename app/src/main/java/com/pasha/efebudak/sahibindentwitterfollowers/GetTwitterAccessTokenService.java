@@ -23,6 +23,14 @@ public class GetTwitterAccessTokenService extends IntentService {
 
     private static final String DEFAULT_SERVICE_NAME = "getTwitterAccessTokenService";
 
+    private static final String CONSUMER_KEY = "ioSlZmCm4Is5wPyAba6iOwPEJ";
+    private static final String CONSUMER_SECRET = "2L3M4OjswltizueshfTjV45wMrMFOaHjlEeCmfYECZnQfdfCtI";
+
+    private static final String END_POINT_URL = "https://api.twitter.com";
+    private static final String AUTHENTICATION_TOKEN_TYPE = "Basic ";
+    private static final String GRANT_TYPE_VALUE = "client_credentials";
+    private static final String UTF_8 = "UTF-8";
+
     public GetTwitterAccessTokenService() {
         super(DEFAULT_SERVICE_NAME);
     }
@@ -38,17 +46,14 @@ public class GetTwitterAccessTokenService extends IntentService {
     public static Intent newIntent(
             Context context) {
 
-        final Intent intent = new Intent(context, GetTwitterAccessTokenService.class);
-
-
-        return intent;
+        return new Intent(context, GetTwitterAccessTokenService.class);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
 
         final RestAdapter restAdapterTwitter = new RestAdapter.Builder()
-                .setEndpoint("https://api.twitter.com")
+                .setEndpoint(END_POINT_URL)
                 .setLogLevel(RestAdapter.LogLevel.FULL)
                 .build();
 
@@ -60,16 +65,17 @@ public class GetTwitterAccessTokenService extends IntentService {
         try {
 
             String encodedConsumerKey
-                    = URLEncoder.encode("ioSlZmCm4Is5wPyAba6iOwPEJ", "UTF-8");
+                    = URLEncoder.encode(CONSUMER_KEY, UTF_8);
             String encodedConsumerSecret
-                    = URLEncoder.encode("2L3M4OjswltizueshfTjV45wMrMFOaHjlEeCmfYECZnQfdfCtI", "UTF-8");
+                    = URLEncoder.encode(CONSUMER_SECRET, UTF_8);
             String authString = encodedConsumerKey + ":" + encodedConsumerSecret;
-            base64EncodedString = Base64.encodeToString(authString.getBytes("UTF-8"), Base64.NO_WRAP);
+            base64EncodedString
+                    = Base64.encodeToString(authString.getBytes(UTF_8), Base64.NO_WRAP);
 
             tokenModel
                     = twitterServices.getAccessToken(
-                    "Basic " + base64EncodedString,
-                    "client_credentials");
+                    AUTHENTICATION_TOKEN_TYPE + base64EncodedString,
+                    GRANT_TYPE_VALUE);
 
         } catch (Exception e) {
             tokenModel = null;
@@ -78,7 +84,6 @@ public class GetTwitterAccessTokenService extends IntentService {
         sendToken(tokenModel);
 
     }
-
 
     private void sendToken(TokenModel tokenModel) {
 
@@ -91,4 +96,5 @@ public class GetTwitterAccessTokenService extends IntentService {
 
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
+
 }

@@ -11,13 +11,45 @@ import com.google.gson.annotations.SerializedName;
 public class FollowerModel implements Parcelable {
 
     @SerializedName("name")
-    public String name;
+    String name;
     @SerializedName("friends_count")
-    public int friendsCount;
+    int friendsCount;
     @SerializedName("created_at")
-    public String createdAt;
+    String createdAt;
     @SerializedName("profile_image_url")
-    public String profileImageUrl;
+    String profileImageUrl;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getFriendsCount() {
+        return friendsCount;
+    }
+
+    public void setFriendsCount(int friendsCount) {
+        this.friendsCount = friendsCount;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
 
     public FollowerModel() {
     }

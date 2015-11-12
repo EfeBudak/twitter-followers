@@ -5,11 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Base64;
 
 import com.pasha.efebudak.sahibindentwitterfollowers.models.FollowerListModel;
-
-import java.net.URLEncoder;
 
 import retrofit.RestAdapter;
 
@@ -19,12 +16,14 @@ import retrofit.RestAdapter;
 public class GetFollowerListService extends IntentService {
 
     public static final String FOLLOWER_LIST_INTENT_NAME = "followerListIntentName";
-    public static final String FOLLOWER_LIST_MODEL = "followerListModel";
+    public static final String KEY_FOLLOWER_LIST_MODEL = "followerListModel";
 
     private static final String DEFAULT_GET_FOLLOWER_LIST_NAME = "defaultGetFollowerListName";
     private static final String KEY_BEARER_TOKEN = "keyBearerToken";
 
-    private String bearerToken;
+    private static final String AUTHENTICATION_TOKEN_TYPE = "Bearer ";
+    private static final String USER_NAME = "sahibindencom";
+    private static final String FOLLOWER_LIMIT = "50";
 
     public GetFollowerListService() {
         super(DEFAULT_GET_FOLLOWER_LIST_NAME);
@@ -55,7 +54,7 @@ public class GetFollowerListService extends IntentService {
     protected void onHandleIntent(Intent intent) {
 
         final Bundle bundle = intent.getExtras();
-        bearerToken = bundle.getString(KEY_BEARER_TOKEN);
+        final String bearerToken = bundle.getString(KEY_BEARER_TOKEN);
 
         final RestAdapter restAdapterTwitter = new RestAdapter.Builder()
                 .setEndpoint("https://api.twitter.com/1.1")
@@ -71,9 +70,9 @@ public class GetFollowerListService extends IntentService {
 
             followerListModel
                     = twitterServices.getFollowerList(
-                    "Bearer " + bearerToken,
-                    "sahibindencom",
-                    "30");
+                    AUTHENTICATION_TOKEN_TYPE + bearerToken,
+                    USER_NAME,
+                    FOLLOWER_LIMIT);
 
         } catch (Exception e) {
             followerListModel = null;
@@ -86,10 +85,10 @@ public class GetFollowerListService extends IntentService {
 
     private void sendFollowerListModel(FollowerListModel followerListModel) {
 
-        Intent intent = new Intent(FOLLOWER_LIST_INTENT_NAME);
-        Bundle bundle = new Bundle();
+        final Intent intent = new Intent(FOLLOWER_LIST_INTENT_NAME);
+        final Bundle bundle = new Bundle();
 
-        bundle.putParcelable(FOLLOWER_LIST_MODEL, followerListModel);
+        bundle.putParcelable(KEY_FOLLOWER_LIST_MODEL, followerListModel);
 
         intent.putExtras(bundle);
 

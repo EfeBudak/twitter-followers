@@ -15,6 +15,14 @@ public class FollowerListModel implements Parcelable {
     @SerializedName("users")
     List<FollowerModel> followerModelList;
 
+    public List<FollowerModel> getFollowerModelList() {
+        return followerModelList;
+    }
+
+    public void setFollowerModelList(List<FollowerModel> followerModelList) {
+        this.followerModelList = followerModelList;
+    }
+
     public FollowerListModel() {
     }
 
